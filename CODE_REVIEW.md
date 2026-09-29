@@ -55,9 +55,9 @@ L'audit approfondi de la base de code (`src/core/`, `src/learn/`, `src/ui/`, `sr
 
 | Réf. | Titre de l'Issue | Statut | Commit Associé |
 |---|---|---|---|
-| **ISSUE-01** | Multi-token formula sequential runner | Résolu | À commiter |
-| **ISSUE-02** | Keyboard handler isolation & Escape toggle | Résolu | À commiter |
-| **ISSUE-03** | Interactive Quiz reset button & re-render | Résolu | À commiter |
-| **ISSUE-04** | Master math completion certificate banner | Résolu | À commiter |
-| **ISSUE-05** | GitHub issue templates standardization | Résolu | À commiter |
-| **ISSUE-06** | Unit tests validation for review fixes | Résolu | À commiter |
+| **ISSUE-01** | Multi-token formula sequential runner | Résolu | [`fdb2ad8`](https://github.com/AmineArheche/calculator/commit/fdb2ad8) |
+| **ISSUE-02** | Keyboard handler isolation & Escape toggle | Résolu | [`9615e97`](https://github.com/AmineArheche/calculator/commit/9615e97) |
+| **ISSUE-03** | Interactive Quiz reset button & re-render | Résolu | [`fdb2ad8`](https://github.com/AmineArheche/calculator/commit/fdb2ad8) |
+| **ISSUE-04** | Master math completion certificate banner | Résolu | [`fdb2ad8`](https://github.com/AmineArheche/calculator/commit/fdb2ad8) |
+| **ISSUE-05** | GitHub issue templates standardization | Résolu | [`d4be778`](https://github.com/AmineArheche/calculator/commit/d4be778) |
+| **ISSUE-06** | Unit tests validation for review fixes | Résolu | [`978d74e`](https://github.com/AmineArheche/calculator/commit/978d74e) |
