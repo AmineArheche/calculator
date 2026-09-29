@@ -15,13 +15,108 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- Ambient background glow elements -->
   <div class="ambient-glow glow-1"></div>
   <div class="ambient-glow glow-2"></div>
   <div class="ambient-glow glow-3"></div>
 
   <main class="app-wrapper">
+    <!-- Calculator Card -->
     <div class="calculator-card" id="calculator">
-      <!-- Calculator markup to be structured in upcoming components -->
+      
+      <!-- Top Navigation / Utilities Bar -->
+      <header class="calculator-header">
+        <div class="brand-indicator">
+          <span class="brand-dot"></span>
+          <span class="brand-title">CALCULATRICE</span>
+        </div>
+        
+        <div class="header-actions">
+          <!-- Sound Toggle Button -->
+          <button id="btn-sound-toggle" class="icon-btn" title="Activer/Désactiver le son des touches" aria-label="Toggle sound">
+            <svg class="icon icon-sound-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            </svg>
+            <svg class="icon icon-sound-off hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+              <line x1="23" y1="9" x2="17" y2="15"></line>
+              <line x1="17" y1="9" x2="23" y2="15"></line>
+            </svg>
+          </button>
+
+          <!-- Copy Result Button -->
+          <button id="btn-copy-result" class="icon-btn" title="Copier le résultat" aria-label="Copy result">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+          </button>
+
+          <!-- History Drawer Toggle -->
+          <button id="btn-history-toggle" class="icon-btn" title="Ouvrir l'historique" aria-label="Open calculation history">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span id="history-badge" class="badge">0</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Dual Display Screen -->
+      <section class="display-container" aria-live="polite">
+        <!-- Secondary Line: Expression / Running Formula -->
+        <div id="secondary-display" class="secondary-display" title="Expression en cours">&nbsp;</div>
+        
+        <!-- Primary Line: Current Value / Final Result -->
+        <div class="primary-row">
+          <div id="primary-display" class="primary-display">0</div>
+        </div>
+
+        <!-- Toast notification for copy / alerts -->
+        <div id="toast-message" class="toast-message">Copié !</div>
+      </section>
+
+      <!-- Keypad Grid (5x4) -->
+      <div class="keypad-grid" role="group" aria-label="Pavé de touches">
+        <!-- Row 1: Function Controls & Division -->
+        <button type="button" class="btn btn-util" data-action="clear" data-key="Escape" aria-label="Tout effacer" id="btn-clear">AC</button>
+        <button type="button" class="btn btn-util" data-action="backspace" data-key="Backspace" aria-label="Effacer le dernier caractère">
+          <svg class="key-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
+            <line x1="18" y1="9" x2="12" y2="15"></line>
+            <line x1="12" y1="9" x2="18" y2="15"></line>
+          </svg>
+        </button>
+        <button type="button" class="btn btn-util" data-action="percent" data-key="%" aria-label="Pourcentage">%</button>
+        <button type="button" class="btn btn-op" data-action="operation" data-op="÷" data-key="/" aria-label="Division">÷</button>
+
+        <!-- Row 2: 7, 8, 9, Multiplication -->
+        <button type="button" class="btn btn-num" data-action="number" data-value="7" data-key="7">7</button>
+        <button type="button" class="btn btn-num" data-action="number" data-value="8" data-key="8">8</button>
+        <button type="button" class="btn btn-num" data-action="number" data-value="9" data-key="9">9</button>
+        <button type="button" class="btn btn-op" data-action="operation" data-op="×" data-key="*" aria-label="Multiplication">×</button>
+
+        <!-- Row 3: 4, 5, 6, Soustraction -->
+        <button type="button" class="btn btn-num" data-action="number" data-value="4" data-key="4">4</button>
+        <button type="button" class="btn btn-num" data-action="number" data-value="5" data-key="5">5</button>
+        <button type="button" class="btn btn-num" data-action="number" data-value="6" data-key="6">6</button>
+        <button type="button" class="btn btn-op" data-action="operation" data-op="−" data-key="-" aria-label="Soustraction">−</button>
+
+        <!-- Row 4: 1, 2, 3, Addition -->
+        <button type="button" class="btn btn-num" data-action="number" data-value="1" data-key="1">1</button>
+        <button type="button" class="btn btn-num" data-action="number" data-value="2" data-key="2">2</button>
+        <button type="button" class="btn btn-num" data-action="number" data-value="3" data-key="3">3</button>
+        <button type="button" class="btn btn-op" data-action="operation" data-op="+" data-key="+" aria-label="Addition">+</button>
+
+        <!-- Row 5: Inversion de signe, 0, Virgule, Égal -->
+        <button type="button" class="btn btn-num" data-action="negate" data-key="±" aria-label="Inverser le signe">±</button>
+        <button type="button" class="btn btn-num" data-action="number" data-value="0" data-key="0">0</button>
+        <button type="button" class="btn btn-num" data-action="decimal" data-key="." aria-label="Virgule décimale">,</button>
+        <button type="button" class="btn btn-equals" data-action="calculate" data-key="Enter" aria-label="Calculer le résultat">=</button>
+      </div>
+
     </div>
   </main>
 
