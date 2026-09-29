@@ -20,6 +20,14 @@ import { CalculatorUI } from './ui/calculator-ui.js';
 import { QuizEngine } from './learn/quiz-engine.js';
 import { LearnUI } from './learn/learn-ui.js';
 import { ThemeManager } from './core/theme-manager.js';
+import { ScientificEngine } from './core/scientific-engine.js';
+import { PracticeGenerator } from './learn/practice-generator.js';
+import { DailyChallengeManager } from './learn/daily-challenge.js';
+import { MathGlossary } from './learn/math-glossary.js';
+import { UnitConverter } from './converters/unit-converter.js';
+import { FinanceMath } from './finance/finance-math.js';
+import { StatsEngine } from './stats/stats-engine.js';
+import { A11yAnnouncer } from './ui/a11y-manager.js';
 
 export function initializeApp() {
   const stateMachine = new CalculatorStateMachine();
@@ -53,6 +61,15 @@ export function initializeApp() {
   const learnUI = new LearnUI(quizEngine, stateMachine, audioEngine);
   learnUI.init();
 
+  const scientificEngine = new ScientificEngine();
+  const practiceGenerator = new PracticeGenerator();
+  const dailyChallengeManager = new DailyChallengeManager();
+  const mathGlossary = new MathGlossary();
+  const unitConverter = new UnitConverter();
+  const financeMath = new FinanceMath();
+  const statsEngine = new StatsEngine();
+  const a11yAnnouncer = new A11yAnnouncer();
+
   return {
     stateMachine,
     historyStore,
@@ -62,6 +79,14 @@ export function initializeApp() {
     ui,
     quizEngine,
     learnUI,
+    scientificEngine,
+    practiceGenerator,
+    dailyChallengeManager,
+    mathGlossary,
+    unitConverter,
+    financeMath,
+    statsEngine,
+    a11yAnnouncer,
   };
 }
 
