@@ -1,0 +1,133 @@
+/* Keypad Grid (5x4) & Tactile Button Variants */
+
+.keypad-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+/* Base Button Styles */
+.btn {
+  font-family: var(--font-sans);
+  height: 62px;
+  border-radius: var(--radius-btn);
+  font-size: 1.45rem;
+  font-weight: 500;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  outline: none;
+  border: 1px solid transparent;
+  transition: all var(--transition-fast);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.btn:active::after,
+.btn.keyboard-active::after {
+  opacity: 1;
+}
+
+.btn:active,
+.btn.keyboard-active {
+  transform: scale(0.93);
+}
+
+/* Numbers (0-9) */
+.btn-num {
+  background: var(--btn-num-bg);
+  border-color: var(--btn-num-border);
+  color: var(--btn-num-text);
+}
+
+.btn-num:hover {
+  background: var(--btn-num-hover);
+}
+
+.btn-num:active,
+.btn-num.keyboard-active {
+  background: var(--btn-num-active);
+}
+
+/* Utilities (AC, ⌫, %) */
+.btn-util {
+  background: var(--btn-util-bg);
+  border-color: var(--btn-util-border);
+  color: var(--btn-util-text);
+  font-weight: 600;
+  font-size: 1.3rem;
+}
+
+.btn-util:hover {
+  background: var(--btn-util-hover);
+}
+
+.btn-util:active,
+.btn-util.keyboard-active {
+  background: var(--btn-util-active);
+}
+
+.key-icon {
+  width: 22px;
+  height: 22px;
+}
+
+/* Operators (+, -, ×, ÷) */
+.btn-op {
+  background: var(--btn-op-bg);
+  border-color: var(--btn-op-border);
+  color: var(--btn-op-text);
+  font-size: 1.65rem;
+  font-weight: 500;
+}
+
+.btn-op:hover {
+  background: var(--btn-op-hover);
+  box-shadow: 0 0 16px rgba(255, 159, 10, 0.25);
+}
+
+.btn-op:active,
+.btn-op.keyboard-active,
+.btn-op.active-op {
+  background: var(--btn-op-active);
+  color: var(--btn-op-active-text);
+  box-shadow: 0 0 20px rgba(255, 159, 10, 0.5);
+  border-color: #ffb13b;
+}
+
+/* Equals Button (=) */
+.btn-equals {
+  background: var(--btn-eq-bg);
+  color: var(--btn-eq-text);
+  font-size: 1.7rem;
+  font-weight: 600;
+  box-shadow: var(--btn-eq-shadow);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.btn-equals:hover {
+  background: var(--btn-eq-hover);
+  box-shadow: 0 10px 28px -2px rgba(255, 159, 10, 0.6);
+  transform: translateY(-1px);
+}
+
+.btn-equals:active,
+.btn-equals.keyboard-active {
+  background: var(--btn-eq-active);
+  transform: scale(0.93);
+  box-shadow: 0 4px 12px rgba(255, 159, 10, 0.4);
+}
