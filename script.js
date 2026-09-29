@@ -44,7 +44,59 @@ class ModernCalculator {
 
       this.handleAction(action, value, op);
     });
+
+    // Écouteur pour le clavier physique
+    window.addEventListener('keydown', (e) => this.handleKeyboardInput(e));
   }
+
+  handleKeyboardInput(e) {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+    const key = e.key;
+
+    if (key >= '0' && key <= '9') {
+      this.handleAction('number', key, null);
+      this.animateKeypress(`[data-value="${key}"]`);
+    } else if (key === '.' || key === ',') {
+      this.handleAction('decimal', null, null);
+      this.animateKeypress('[data-action="decimal"]');
+    } else if (key === '+') {
+      this.handleAction('operation', null, '+');
+      this.animateKeypress('[data-op="+"]');
+    } else if (key === '-') {
+      this.handleAction('operation', null, '−');
+      this.animateKeypress('[data-op="−"]');
+    } else if (key === '*') {
+      this.handleAction('operation', null, '×');
+      this.animateKeypress('[data-op="×"]');
+    } else if (key === '/') {
+      e.preventDefault();
+      this.handleAction('operation', null, '÷');
+      this.animateKeypress('[data-op="÷"]');
+    } else if (key === 'Enter' || key === '=') {
+      e.preventDefault();
+      this.handleAction('calculate', null, null);
+      this.animateKeypress('.btn-equals');
+    } else if (key === 'Backspace') {
+      this.handleAction('backspace', null, null);
+      this.animateKeypress('[data-action="backspace"]');
+    } else if (key === 'Escape' || key === 'Delete') {
+      this.handleAction('clear', null, null);
+      this.animateKeypress('[data-action="clear"]');
+    } else if (key === '%') {
+      this.handleAction('percent', null, null);
+      this.animateKeypress('[data-action="percent"]');
+    }
+  }
+
+  animateKeypress(selector) {
+    const btn = document.querySelector(selector);
+    if (btn) {
+      btn.classList.add('keyboard-active');
+      setTimeout(() => btn.classList.remove('keyboard-active'), 140);
+    }
+  }
+
 
   handleAction(action, value, op) {
     if (this.isError && action !== 'clear') {
