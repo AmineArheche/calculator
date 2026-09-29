@@ -12,6 +12,12 @@ class ModernCalculator {
     this.primaryDisplay = document.getElementById('primary-display');
     this.secondaryDisplay = document.getElementById('secondary-display');
     this.btnClear = document.getElementById('btn-clear');
+    this.historyDrawer = document.getElementById('history-drawer');
+    this.historyList = document.getElementById('history-list');
+    this.historyBadge = document.getElementById('history-badge');
+    this.btnHistoryToggle = document.getElementById('btn-history-toggle');
+    this.btnCloseHistory = document.getElementById('btn-close-history');
+    this.btnClearHistory = document.getElementById('btn-clear-history');
 
     // --- État interne du Calculateur ---
     this.currentValue = '0';
@@ -21,6 +27,9 @@ class ModernCalculator {
     this.isError = false;
     this.lastComputedFormula = '';
 
+    // --- Historique & Paramètres ---
+    this.history = JSON.parse(localStorage.getItem('calc_history') || '[]');
+
     // Initialisation
     this.init();
   }
@@ -28,6 +37,7 @@ class ModernCalculator {
   init() {
     this.bindEvents();
     this.updateDisplay();
+    this.renderHistory();
   }
 
   bindEvents() {
@@ -47,6 +57,43 @@ class ModernCalculator {
 
     // Écouteur pour le clavier physique
     window.addEventListener('keydown', (e) => this.handleKeyboardInput(e));
+
+    // Tiroir d'historique
+    if (this.btnHistoryToggle) {
+      this.btnHistoryToggle.addEventListener('click', () => this.toggleHistory(true));
+    }
+    if (this.btnCloseHistory) {
+      this.btnCloseHistory.addEventListener('click', () => this.toggleHistory(false));
+    }
+    if (this.btnClearHistory) {
+      this.btnClearHistory.addEventListener('click', () => this.clearHistory());
+    }
+
+    // Clic sur un élément de l'historique pour réutiliser la valeur
+    if (this.historyList) {
+      this.historyList.addEventListener('click', (e) => {
+        const item = e.target.closest('.history-item');
+        if (!item) return;
+
+        const resultVal = item.dataset.result;
+        if (resultVal) {
+          this.currentValue = resultVal;
+          this.shouldResetScreen = true;
+          this.updateDisplay();
+          this.toggleHistory(false);
+        }
+      });
+    }
+
+    // Fermer l'historique en cliquant à l'extérieur
+    document.addEventListener('click', (e) => {
+      if (this.historyDrawer &&
+          this.historyDrawer.classList.contains('open') &&
+          !this.historyDrawer.contains(e.target) &&
+          !this.btnHistoryToggle.contains(e.target)) {
+        this.toggleHistory(false);
+      }
+    });
   }
 
   handleKeyboardInput(e) {
@@ -228,9 +275,76 @@ class ModernCalculator {
     this.operation = isFinal ? null : this.operation;
     this.shouldResetScreen = true;
 
+    if (isFinal) {
+      this.addToHistory(formula, this.formatNumber(result));
+    }
+
     this.updateActiveOpButton();
     this.updateClearButtonText();
   }
+
+  toggleHistory(open) {
+    if (!this.historyDrawer) return;
+    if (open) {
+      this.historyDrawer.classList.add('open');
+      this.historyDrawer.setAttribute('aria-hidden', 'false');
+    } else {
+      this.historyDrawer.classList.remove('open');
+      this.historyDrawer.setAttribute('aria-hidden', 'true');
+    }
+  }
+
+  addToHistory(expression, result) {
+    const item = {
+      id: Date.now(),
+      expression: expression,
+      result: result,
+      date: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
+
+    this.history.unshift(item);
+    if (this.history.length > 30) this.history.pop();
+
+    localStorage.setItem('calc_history', JSON.stringify(this.history));
+    this.renderHistory();
+  }
+
+  renderHistory() {
+    if (!this.historyBadge || !this.historyList) return;
+
+    const count = this.history.length;
+    this.historyBadge.textContent = count;
+    if (count > 0) {
+      this.historyBadge.classList.add('visible');
+    } else {
+      this.historyBadge.classList.remove('visible');
+    }
+
+    if (count === 0) {
+      this.historyList.innerHTML = `
+        <div class="history-empty">
+          <p>Aucun calcul récent</p>
+          <span>Vos opérations terminées apparaîtront ici.</span>
+        </div>
+      `;
+      return;
+    }
+
+    this.historyList.innerHTML = this.history.map(item => `
+      <div class="history-item" data-id="${item.id}" data-result="${item.result.replace(/\\s/g, '').replace(',', '.')}" title="Cliquer pour réutiliser ce résultat">
+        <span class="history-item-time">${item.date}</span>
+        <span class="history-item-exp">${item.expression} =</span>
+        <span class="history-item-res">${item.result}</span>
+      </div>
+    `).join('');
+  }
+
+  clearHistory() {
+    this.history = [];
+    localStorage.removeItem('calc_history');
+    this.renderHistory();
+  }
+
 
   applyPercent() {
     let current = parseFloat(this.currentValue);

@@ -475,6 +475,161 @@ body {
   box-shadow: 0 4px 12px rgba(255, 159, 10, 0.4);
 }
 
+/* --- 9. Tiroir d'Historique (Slide-in Drawer) --- */
+.history-drawer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--drawer-bg);
+  backdrop-filter: blur(32px) saturate(190%);
+  -webkit-backdrop-filter: blur(32px) saturate(190%);
+  border-radius: var(--radius-app);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  z-index: 50;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(12px) scale(0.98);
+  transition: all var(--transition-smooth);
+}
+
+.history-drawer.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--drawer-border);
+}
+
+.history-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-main);
+}
+
+.history-title-wrap .icon {
+  width: 18px;
+  height: 18px;
+  color: #ff9f0a;
+}
+
+.history-title-wrap h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+}
+
+.history-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.text-btn {
+  background: transparent;
+  border: none;
+  color: #ff5555;
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background var(--transition-fast);
+}
+
+.text-btn:hover {
+  background: rgba(255, 85, 85, 0.12);
+}
+
+/* Liste d'historique */
+.history-list {
+  flex: 1;
+  overflow-y: auto;
+  margin-top: 14px;
+  padding-right: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Scrollbar personnalisée */
+.history-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.history-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+
+.history-item {
+  background: var(--item-bg);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 14px;
+  padding: 12px 14px;
+  text-align: right;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.history-item:hover {
+  background: var(--item-hover);
+  border-color: rgba(255, 159, 10, 0.3);
+  transform: translateX(-3px);
+}
+
+.history-item-exp {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.history-item-res {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #ff9f0a;
+}
+
+.history-item-time {
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  text-align: left;
+}
+
+.history-empty {
+  margin: auto 0;
+  text-align: center;
+  color: var(--text-dim);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 40px 10px;
+}
+
+.history-empty p {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.history-empty span {
+  font-size: 0.8rem;
+}
+
 /* --- Pied de Page / Raccourcis Clavier --- */
 .shortcuts-helper {
   display: flex;

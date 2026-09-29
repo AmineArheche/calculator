@@ -117,6 +117,35 @@
         <button type="button" class="btn btn-equals" data-action="calculate" data-key="Enter" aria-label="Calculer le résultat">=</button>
       </div>
 
+      <!-- History Drawer Overlay -->
+      <aside id="history-drawer" class="history-drawer" aria-hidden="true">
+        <div class="history-header">
+          <div class="history-title-wrap">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <h3>Historique</h3>
+          </div>
+          <div class="history-controls">
+            <button id="btn-clear-history" class="text-btn" title="Vider l'historique">Vider</button>
+            <button id="btn-close-history" class="icon-btn" title="Fermer le panneau" aria-label="Close history">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div id="history-list" class="history-list">
+          <div class="history-empty">
+            <p>Aucun calcul récent</p>
+            <span>Vos opérations terminées apparaîtront ici.</span>
+          </div>
+        </div>
+      </aside>
+
     </div>
 
     <!-- Keyboard Shortcuts Helper Footer -->
