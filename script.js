@@ -12,12 +12,14 @@ class ModernCalculator {
     this.primaryDisplay = document.getElementById('primary-display');
     this.secondaryDisplay = document.getElementById('secondary-display');
     this.btnClear = document.getElementById('btn-clear');
+    this.toastMessage = document.getElementById('toast-message');
     this.historyDrawer = document.getElementById('history-drawer');
     this.historyList = document.getElementById('history-list');
     this.historyBadge = document.getElementById('history-badge');
     this.btnHistoryToggle = document.getElementById('btn-history-toggle');
     this.btnCloseHistory = document.getElementById('btn-close-history');
     this.btnClearHistory = document.getElementById('btn-clear-history');
+    this.btnCopyResult = document.getElementById('btn-copy-result');
     this.btnSoundToggle = document.getElementById('btn-sound-toggle');
     this.iconSoundOn = this.btnSoundToggle ? this.btnSoundToggle.querySelector('.icon-sound-on') : null;
     this.iconSoundOff = this.btnSoundToggle ? this.btnSoundToggle.querySelector('.icon-sound-off') : null;
@@ -95,6 +97,14 @@ class ModernCalculator {
           this.toggleHistory(false);
         }
       });
+    }
+
+    // Copie du résultat
+    if (this.btnCopyResult) {
+      this.btnCopyResult.addEventListener('click', () => this.copyToClipboard());
+    }
+    if (this.primaryDisplay) {
+      this.primaryDisplay.addEventListener('click', () => this.copyToClipboard());
     }
 
     // Fermer l'historique en cliquant à l'extérieur
@@ -493,6 +503,51 @@ class ModernCalculator {
       return `${formattedInt},${decimalPart}`;
     }
     return formattedInt;
+  }
+
+  /**
+   * Copie de la valeur affichée dans le presse-papier
+   */
+  copyToClipboard() {
+    if (this.isError) return;
+
+    const valueToCopy = this.currentValue;
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(valueToCopy)
+        .then(() => {
+          this.showToast('Copié !');
+          this.playSound('click');
+        })
+        .catch(() => this.fallbackCopy(valueToCopy));
+    } else {
+      this.fallbackCopy(valueToCopy);
+    }
+  }
+
+  fallbackCopy(text) {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.position = 'fixed';
+    textArea.style.opacity = '0';
+    document.body.appendChild(textArea);
+    textArea.select();
+    try {
+      document.execCommand('copy');
+      this.showToast('Copié !');
+      this.playSound('click');
+    } catch (err) {
+      this.showToast('Échec de la copie');
+    }
+    document.body.removeChild(textArea);
+  }
+
+  showToast(message) {
+    if (!this.toastMessage) return;
+    this.toastMessage.textContent = message;
+    this.toastMessage.classList.add('show');
+    setTimeout(() => {
+      this.toastMessage.classList.remove('show');
+    }, 1800);
   }
 
   /**
