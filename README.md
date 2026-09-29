@@ -100,23 +100,34 @@ Un laboratoire interactif complet dédié aux élèves et étudiants pour maîtr
 
 ## 🧪 Tests Automatisés (Vitest)
 
-La suite de tests unitaires valide l'ensemble des règles métier, la machine à états, les raccourcis clavier, les 10 leçons et le moteur de quiz :
+La suite complète de tests unitaires valide l'ensemble des modules arithmétiques, scientifiques, financiers, statistiques, convertisseurs, gestionnaires d'historique, quiz et accessibilité :
 
 ```bash
-# Exécuter l'ensemble des tests
+# Exécuter l'ensemble des 17 suites de tests
 npm test
 
 # Exécuter les tests en mode watch interactif
 npm run test:watch
 ```
 
-**42 tests unitaires** couvrent l'intégralité du projet :
+**87 tests unitaires (17 suites)** couvrent l'intégralité du projet :
 - `math-engine.test.js` : Précision arithmétique, flottants IEEE 754, arrondis et divisions par zéro
-- `calculator-state.test.js` : Machine à états, enchaînement d'opérations et réinitialisation
+- `calculator-state.test.js` : Machine à états finis (FSM), enchaînements d'opérations et réinitialisation
+- `scientific-engine.test.js` : Trigonométrie DEG/RAD, logarithmes (ln, log10, log2), racines n-ièmes et factorielles
 - `history-store.test.js` : Persistance localStorage et limitations de capacité
 - `keyboard-handler.test.js` : Routage des frappes clavier physique
-- `learn-data.test.js` : Validation de l'intégrité des 10 cours de mathématiques
+- `theme-manager.test.js` : Gestion des thèmes visuels (Nebula, OLED, Cyberpunk, Frost) et persistance
+- `sound-presets.test.js` : Profils audio Web Audio API (Mécanique, Bulle, 8-bit, Sci-Fi)
+- `unit-converter.test.js` : Conversions de longueurs, masses, températures et stockage numérique
+- `finance-math.test.js` : Intérêts composés, mensualités de prêts et ROI
+- `stats-engine.test.js` : Moyenne, médiane, mode, variance d'échantillon/population et écart-type
+- `math-glossary.test.js` : Recherche plein texte et filtrage catégoriel du lexique mathématique
+- `daily-challenge.test.js` : Défis quotidiens déterministes, calcul de séries (streaks) et badges
+- `practice-generator.test.js` : Générateur dynamique d'exercices d'entraînement et validation de saisie
+- `learn-data.test.js` : Validation de l'exhaustivité didactique des 10 cours de mathématiques
 - `quiz-engine.test.js` : Moteur de quiz, validation de réponses et persistance de score
+- `review-fixes.test.js` : Évaluation multi-jetons séquentielle, reset de quiz et isolation clavier
+- `a11y-manager.test.js` : Annonces vocales en direct pour lecteurs d'écran (aria-live polite/assertive)
 
 ---
 
