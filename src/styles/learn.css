@@ -1,5 +1,66 @@
 /* Student Math Learning Lab - Stylesheet */
 
+/* App Wrapper Expansion when Lab is Active */
+.app-wrapper:has(.learn-container.active) {
+  max-width: 760px;
+}
+
+/* Mode Switcher Navigation */
+.app-nav-bar {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 4px;
+  z-index: 10;
+}
+
+.mode-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(22, 27, 34, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--text-main);
+  padding: 8px 18px;
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-size: 0.86rem;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  transition: all var(--transition-fast);
+}
+
+.mode-pill-btn:hover {
+  border-color: rgba(255, 159, 10, 0.4);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(255, 159, 10, 0.15);
+}
+
+.mode-pill-btn .pill-text-lab {
+  display: none;
+}
+
+.mode-pill-btn .pill-text-calc {
+  display: inline;
+}
+
+.mode-pill-btn.active-mode {
+  background: rgba(255, 159, 10, 0.15);
+  border-color: rgba(255, 159, 10, 0.5);
+  color: #ffb340;
+}
+
+.mode-pill-btn.active-mode .pill-text-lab {
+  display: inline;
+}
+
+.mode-pill-btn.active-mode .pill-text-calc {
+  display: none;
+}
+
 .learn-container {
   display: none;
   width: 100%;

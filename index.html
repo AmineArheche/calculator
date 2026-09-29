@@ -23,6 +23,15 @@
   <div class="ambient-glow glow-3"></div>
 
   <main class="app-wrapper">
+    <!-- Top Mode Switcher Navigation -->
+    <nav class="app-nav-bar" aria-label="Navigation principale">
+      <button id="btn-learn-mode-toggle" class="mode-pill-btn" title="Ouvrir le laboratoire de cours et quiz de maths">
+        <span class="pill-icon">🎓</span>
+        <span class="pill-text-calc">Espace Cours & Quiz (10 Leçons)</span>
+        <span class="pill-text-lab">← Revenir à la Calculatrice</span>
+      </button>
+    </nav>
+
     <!-- Calculator Card -->
     <div class="calculator-card" id="calculator">
       
@@ -34,6 +43,14 @@
         </div>
         
         <div class="header-actions">
+          <!-- Student Learning Lab Header Shortcut -->
+          <button id="btn-learn-mode-header" class="icon-btn" onclick="document.getElementById('btn-learn-mode-toggle').click()" title="Laboratoire d'apprentissage mathématique" aria-label="Toggle math learning lab">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+              <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+            </svg>
+          </button>
+
           <!-- Sound Toggle Button -->
           <button id="btn-sound-toggle" class="icon-btn" title="Activer/Désactiver le son des touches" aria-label="Toggle sound">
             <svg class="icon icon-sound-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -149,6 +166,9 @@
       </aside>
 
     </div>
+    
+    <!-- Student Math Learning Lab Container -->
+    <section id="learn-container" class="learn-container" aria-label="Centre d'apprentissage mathématique"></section>
 
     <!-- Keyboard Shortcuts Helper Footer -->
     <footer class="shortcuts-helper">
