@@ -52,4 +52,13 @@ if (typeof document !== 'undefined') {
   } else {
     window.app = initializeApp();
   }
+
+  // Register Service Worker for offline PWA installation
+  if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch((err) => {
+        console.debug('ServiceWorker registration skipped:', err);
+      });
+    });
+  }
 }
