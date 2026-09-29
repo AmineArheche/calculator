@@ -2,7 +2,8 @@
  * ==========================================================================
  * CALCULATRICE MODERNE & ÉLÉGANTE - MOTEUR JAVASCRIPT
  * ==========================================================================
- * Gestion des opérations mathématiques de base, affichage dual et machine à états.
+ * Gestion des opérations mathématiques avec haute précision,
+ * support des pourcentages, inversion de signe et ajustement dynamique d'affichage.
  */
 
 class ModernCalculator {
@@ -68,6 +69,12 @@ class ModernCalculator {
         break;
       case 'backspace':
         this.deleteLast();
+        break;
+      case 'percent':
+        this.applyPercent();
+        break;
+      case 'negate':
+        this.toggleSign();
         break;
     }
 
@@ -160,6 +167,9 @@ class ModernCalculator {
         return;
     }
 
+    // Correction de la précision en virgule flottante IEEE 754 (évite 0.1 + 0.2 = 0.30000000000000004)
+    result = this.roundPrecision(result);
+
     this.lastComputedFormula = `${formula} =`;
     this.currentValue = result.toString();
     this.previousValue = isFinal ? null : result.toString();
@@ -168,6 +178,35 @@ class ModernCalculator {
 
     this.updateActiveOpButton();
     this.updateClearButtonText();
+  }
+
+  applyPercent() {
+    let current = parseFloat(this.currentValue);
+    if (isNaN(current)) return;
+
+    if (this.previousValue !== null && this.operation !== null) {
+      const prev = parseFloat(this.previousValue);
+      if (this.operation === '+' || this.operation === '−' || this.operation === '-') {
+        current = prev * (current / 100);
+      } else {
+        current = current / 100;
+      }
+    } else {
+      current = current / 100;
+    }
+
+    this.currentValue = this.roundPrecision(current).toString();
+    this.updateClearButtonText();
+  }
+
+  toggleSign() {
+    if (this.currentValue === '0' || this.currentValue === '') return;
+
+    if (this.currentValue.startsWith('-')) {
+      this.currentValue = this.currentValue.slice(1);
+    } else {
+      this.currentValue = '-' + this.currentValue;
+    }
   }
 
   deleteLast() {
@@ -197,18 +236,24 @@ class ModernCalculator {
     this.updateClearButtonText();
   }
 
-  triggerError(msg) {
+  triggerError(message) {
     this.isError = true;
-    this.currentValue = msg;
+    this.currentValue = message;
     this.previousValue = null;
     this.operation = null;
     this.shouldResetScreen = true;
     this.primaryDisplay.classList.add('error-state');
+    this.updateActiveOpButton();
+  }
+
+  roundPrecision(num) {
+    if (isNaN(num)) return num;
+    return parseFloat(Number(Math.round(num + 'e+12') + 'e-12').toFixed(12));
   }
 
   updateClearButtonText() {
     if (this.btnClear) {
-      this.btnClear.textContent = (this.currentValue !== '0' || this.isError) ? 'C' : 'AC';
+      this.btnClear.textContent = (this.currentValue !== '0' && !this.shouldResetScreen) ? 'C' : 'AC';
     }
   }
 
@@ -230,37 +275,43 @@ class ModernCalculator {
       return;
     }
 
-    // Affichage de la ligne secondaire (formule)
+    this.primaryDisplay.textContent = this.formatNumber(this.currentValue);
+
+    // Ajustement dynamique de la taille de police pour les grands nombres
+    const charCount = this.primaryDisplay.textContent.length;
+    this.primaryDisplay.classList.remove('size-medium', 'size-small', 'size-tiny');
+
+    if (charCount > 13) {
+      this.primaryDisplay.classList.add('size-tiny');
+    } else if (charCount > 9) {
+      this.primaryDisplay.classList.add('size-small');
+    } else if (charCount > 6) {
+      this.primaryDisplay.classList.add('size-medium');
+    }
+
     if (this.previousValue !== null && this.operation !== null) {
-      this.secondaryDisplay.textContent = `${this.formatDisplayString(this.previousValue)} ${this.operation}`;
-    } else if (this.lastComputedFormula) {
+      this.secondaryDisplay.textContent = `${this.formatNumber(this.previousValue)} ${this.operation}`;
+    } else if (this.lastComputedFormula !== '') {
       this.secondaryDisplay.textContent = this.lastComputedFormula;
     } else {
       this.secondaryDisplay.innerHTML = '&nbsp;';
     }
-
-    // Affichage principal
-    this.primaryDisplay.textContent = this.formatDisplayString(this.currentValue);
-  }
-
-  formatDisplayString(valStr) {
-    if (!valStr && valStr !== '0') return '0';
-    if (valStr === '-') return '-';
-
-    const parts = valStr.split('.');
-    const integerPart = parts[0];
-    const decimalPart = parts.length > 1 ? parts[1] : null;
-
-    let formattedInt = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-
-    if (decimalPart !== null) {
-      return `${formattedInt},${decimalPart}`;
-    }
-    return formattedInt;
   }
 
   formatNumber(num) {
-    return this.formatDisplayString(num.toString());
+    if (typeof num === 'string' && (num === 'Division par zéro' || num === 'Erreur' || num === 'NaN')) {
+      return num;
+    }
+
+    const stringNum = num.toString();
+    const [integerPart, decimalPart] = stringNum.split('.');
+
+    const formattedInt = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+
+    if (decimalPart !== undefined) {
+      return `${formattedInt},${decimalPart}`;
+    }
+    return formattedInt;
   }
 }
 
