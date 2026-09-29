@@ -18,6 +18,9 @@ class ModernCalculator {
     this.btnHistoryToggle = document.getElementById('btn-history-toggle');
     this.btnCloseHistory = document.getElementById('btn-close-history');
     this.btnClearHistory = document.getElementById('btn-clear-history');
+    this.btnSoundToggle = document.getElementById('btn-sound-toggle');
+    this.iconSoundOn = this.btnSoundToggle ? this.btnSoundToggle.querySelector('.icon-sound-on') : null;
+    this.iconSoundOff = this.btnSoundToggle ? this.btnSoundToggle.querySelector('.icon-sound-off') : null;
 
     // --- État interne du Calculateur ---
     this.currentValue = '0';
@@ -29,6 +32,8 @@ class ModernCalculator {
 
     // --- Historique & Paramètres ---
     this.history = JSON.parse(localStorage.getItem('calc_history') || '[]');
+    this.soundEnabled = localStorage.getItem('calc_sound') !== 'false';
+    this.audioCtx = null;
 
     // Initialisation
     this.init();
@@ -38,6 +43,7 @@ class ModernCalculator {
     this.bindEvents();
     this.updateDisplay();
     this.renderHistory();
+    this.updateSoundIcon();
   }
 
   bindEvents() {
@@ -48,12 +54,18 @@ class ModernCalculator {
       const btn = e.target.closest('button');
       if (!btn) return;
 
+      this.playSound('click');
       const action = btn.dataset.action;
       const value = btn.dataset.value;
       const op = btn.dataset.op;
 
       this.handleAction(action, value, op);
     });
+
+    // Toggle Son
+    if (this.btnSoundToggle) {
+      this.btnSoundToggle.addEventListener('click', () => this.toggleSound());
+    }
 
     // Écouteur pour le clavier physique
     window.addEventListener('keydown', (e) => this.handleKeyboardInput(e));
@@ -140,6 +152,7 @@ class ModernCalculator {
     const btn = document.querySelector(selector);
     if (btn) {
       btn.classList.add('keyboard-active');
+      this.playSound('click');
       setTimeout(() => btn.classList.remove('keyboard-active'), 140);
     }
   }
@@ -277,6 +290,7 @@ class ModernCalculator {
 
     if (isFinal) {
       this.addToHistory(formula, this.formatNumber(result));
+      this.playSound('success');
     }
 
     this.updateActiveOpButton();
@@ -409,6 +423,7 @@ class ModernCalculator {
     this.operation = null;
     this.shouldResetScreen = true;
     this.primaryDisplay.classList.add('error-state');
+    this.playSound('error');
     this.updateActiveOpButton();
   }
 
@@ -478,6 +493,79 @@ class ModernCalculator {
       return `${formattedInt},${decimalPart}`;
     }
     return formattedInt;
+  }
+
+  /**
+   * Effets sonores synthétisés avec Web Audio API
+   */
+  toggleSound() {
+    this.soundEnabled = !this.soundEnabled;
+    localStorage.setItem('calc_sound', this.soundEnabled.toString());
+    this.updateSoundIcon();
+  }
+
+  updateSoundIcon() {
+    if (!this.iconSoundOn || !this.iconSoundOff) return;
+    if (this.soundEnabled) {
+      this.iconSoundOn.classList.remove('hidden');
+      this.iconSoundOff.classList.add('hidden');
+    } else {
+      this.iconSoundOn.classList.add('hidden');
+      this.iconSoundOff.classList.remove('hidden');
+    }
+  }
+
+  playSound(type = 'click') {
+    if (!this.soundEnabled) return;
+
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+
+      if (!this.audioCtx) {
+        this.audioCtx = new AudioCtx();
+      }
+
+      if (this.audioCtx.state === 'suspended') {
+        this.audioCtx.resume();
+      }
+
+      const osc = this.audioCtx.createOscillator();
+      const gain = this.audioCtx.createGain();
+
+      osc.connect(gain);
+      gain.connect(this.audioCtx.destination);
+
+      const now = this.audioCtx.currentTime;
+
+      if (type === 'click') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(600, now);
+        osc.frequency.exponentialRampToValueAtTime(150, now + 0.04);
+        gain.gain.setValueAtTime(0.08, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+        osc.start(now);
+        osc.stop(now + 0.04);
+      } else if (type === 'success') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(523.25, now);
+        osc.frequency.setValueAtTime(659.25, now + 0.06);
+        gain.gain.setValueAtTime(0.06, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+        osc.start(now);
+        osc.stop(now + 0.15);
+      } else if (type === 'error') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(200, now);
+        osc.frequency.linearRampToValueAtTime(100, now + 0.12);
+        gain.gain.setValueAtTime(0.08, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+        osc.start(now);
+        osc.stop(now + 0.12);
+      }
+    } catch (e) {
+      // Ignorer si bloqué par les stratégies du navigateur
+    }
   }
 }
 
