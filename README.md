@@ -10,12 +10,12 @@ Le projet sépare strictement la logique métier, la persistance, l'audio et la 
 
 ```
 calculatrice-app/
-├── index.html                   # Structure sémantique HTML5
+├── index.html                   # Structure sémantique HTML5 & sélecteur de mode
 ├── package.json                 # Scripts Vite & dépendances Vitest
 ├── vite.config.js               # Configuration du bundler Vite
 ├── vitest.config.js             # Configuration du runner de tests Vitest (JSDOM)
 ├── src/
-│   ├── main.js                  # Point d'entrée de l'application
+│   ├── main.js                  # Point d'entrée de l'application & initialisation
 │   ├── core/
 │   │   ├── math-engine.js       # Moteur arithmétique haute précision (correction IEEE 754)
 │   │   ├── calculator-state.js  # Machine à états finis (Finite State Machine)
@@ -23,6 +23,21 @@ calculatrice-app/
 │   │   ├── audio-engine.js      # Synthèse sonore temps réel (Web Audio API)
 │   │   ├── keyboard-handler.js  # Écouteurs globaux et mappage clavier matériel
 │   │   └── clipboard.js         # Service de copie presse-papier avec notifications toast
+│   ├── learn/
+│   │   ├── learn-data.js        # Référentiel des 10 modules pédagogiques
+│   │   ├── quiz-engine.js       # Moteur de quiz réactif avec persistance des scores
+│   │   ├── learn-ui.js          # Contrôleur d'interface utilisateur de l'espace cours
+│   │   └── math-topics/         # 10 modules de cours interactifs
+│   │       ├── addition.js
+│   │       ├── subtraction.js
+│   │       ├── multiplication.js
+│   │       ├── division.js
+│   │       ├── fractions.js
+│   │       ├── decimals.js
+│   │       ├── percentages.js
+│   │       ├── pemdas.js
+│   │       ├── negative-numbers.js
+│   │       └── powers-roots.js
 │   ├── ui/
 │   │   ├── display.js           # Contrôleur double écran & auto-scaling de police
 │   │   └── calculator-ui.js     # Médiateur de présentation DOM ↔ État
@@ -32,12 +47,16 @@ calculatrice-app/
 │       ├── calculator.css       # Boîtier card, header et toast
 │       ├── keypad.css           # Pavé 5x4 et retours tactiles
 │       ├── history.css          # Tiroir coulissant & entrées passées
-│       └── responsive.css       # Media queries mobile, tablette et bureau
+│       ├── responsive.css       # Media queries mobile, tablette et bureau
+│       ├── learn.css            # Cartes d'apprentissage, glassmorphism & navigation
+│       └── quiz.css             # Mini-quiz interactifs, feedback et barre de progression
 └── tests/
     ├── math-engine.test.js      # Tests unitaires de précision arithmétique & cas limites
     ├── calculator-state.test.js # Tests de transitions d'états, enchaînements et erreurs
     ├── history-store.test.js    # Tests de persistance et limitation d'historique
-    └── keyboard-handler.test.js # Tests du routage des touches clavier
+    ├── keyboard-handler.test.js # Tests du routage des touches clavier
+    ├── learn-data.test.js       # Tests unitaires validant l'exhaustivité des 10 cours
+    └── quiz-engine.test.js      # Tests unitaires du moteur de quiz et scoring
 ```
 
 ---
@@ -61,26 +80,43 @@ calculatrice-app/
 - **Copie au clic :** Cliquez sur l'icône de copie ou sur l'écran pour copier le résultat dans le presse-papier avec confirmation visuelle (*Toast « Copié ! »*).
 - **Haptique sonore (Web Audio API) :** Clics subtils, carillon harmonique de validation et son d'alerte, désactivables via l'icône haut-parleur.
 
+### 4. 🎓 Centre d'Apprentissage Mathématique (10 Modules Fondamentaux)
+Un laboratoire interactif complet dédié aux élèves et étudiants pour maîtriser les bases du calcul :
+1. **➕ Addition & Calcul Mental :** Décomposition par dizaines, associativité et astuces de vitesse.
+2. **➖ Soustraction & Droite Graduée :** Différence relative, visualisation par saut et compléments à 100.
+3. **✖️ Multiplication & Grille Matricielle :** Répétition d'ajouts, commutativité et tables mnémotechniques.
+4. **➗ Division & Restes (Euclidienne) :** Partage équitable, quotient, reste et critères de divisibilité.
+5. **🍕 Fractions & Équivalences :** Numérateur, dénominateur, simplification et fractions irréductibles.
+6. **🔢 Nombres Décimaux & Valeurs de Position :** Virgule flottante, dixièmes, centièmes et alignement.
+7. **🏷️ Pourcentages & Remises :** Calcul d'un taux, réductions de soldes et coefficients multiplicateurs.
+8. **🎯 Priorités Opératoires (PEMDAS / BODMAS) :** Parenthèses, puissances, multiplications/divisions avant additions/soustractions.
+9. **🌡️ Nombres Négatifs & Règle des Signes :** Valeurs sous zéro, double négation (`-` par `-` donne `+`) et droite numérique.
+10. **⚡ Puissances & Racines Carrées :** Exposants, notation scientifique et carrés parfaits (`√144 = 12`).
+
+- **Bouton « 🚀 Tester sur la calculatrice » :** Chaque leçon intègre un injecteur de formule en direct vers la machine à états pour tester immédiatement la théorie.
+- **Mini-Quiz Didactiques :** 2 questions à choix multiples par leçon avec explications immédiates et barre de score globale synchronisée via `localStorage`.
+
 ---
 
 ## 🧪 Tests Automatisés (Vitest)
 
-La suite de tests unitaires valide l'ensemble des règles métier, la machine à états et les raccourcis clavier :
+La suite de tests unitaires valide l'ensemble des règles métier, la machine à états, les raccourcis clavier, les 10 leçons et le moteur de quiz :
 
 ```bash
-# Exécuter les tests une fois
+# Exécuter l'ensemble des tests
 npm test
 
 # Exécuter les tests en mode watch interactif
 npm run test:watch
 ```
 
-30 tests unitaires couvrent :
-- Précision arithmétique et arrondis
-- Protection contre la division par zéro
-- Enchaînement d'opérations et calculs continus
-- Persistance et restauration de l'historique
-- Mappage des touches du clavier matériel
+**42 tests unitaires** couvrent l'intégralité du projet :
+- `math-engine.test.js` : Précision arithmétique, flottants IEEE 754, arrondis et divisions par zéro
+- `calculator-state.test.js` : Machine à états, enchaînement d'opérations et réinitialisation
+- `history-store.test.js` : Persistance localStorage et limitations de capacité
+- `keyboard-handler.test.js` : Routage des frappes clavier physique
+- `learn-data.test.js` : Validation de l'intégrité des 10 cours de mathématiques
+- `quiz-engine.test.js` : Moteur de quiz, validation de réponses et persistance de score
 
 ---
 
