@@ -19,6 +19,7 @@ import { ClipboardService } from './core/clipboard.js';
 import { CalculatorUI } from './ui/calculator-ui.js';
 import { QuizEngine } from './learn/quiz-engine.js';
 import { LearnUI } from './learn/learn-ui.js';
+import { ThemeManager } from './core/theme-manager.js';
 
 export function initializeApp() {
   const stateMachine = new CalculatorStateMachine();
@@ -29,6 +30,25 @@ export function initializeApp() {
   const ui = new CalculatorUI(stateMachine, historyStore, audioEngine, clipboardService);
   ui.init();
 
+  const themeManager = new ThemeManager();
+  themeManager.init();
+
+  if (typeof document !== 'undefined') {
+    const themeBtn = document.getElementById('btn-theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    if (themeBtn) {
+      if (themeIcon) {
+        themeIcon.textContent = themeManager.getCurrentThemeDetails().icon;
+      }
+      themeBtn.addEventListener('click', () => {
+        const next = themeManager.cycleNextTheme();
+        if (themeIcon) themeIcon.textContent = next.icon;
+        themeBtn.title = `Thème : ${next.name}`;
+        audioEngine.play('click');
+      });
+    }
+  }
+
   const quizEngine = new QuizEngine();
   const learnUI = new LearnUI(quizEngine, stateMachine, audioEngine);
   learnUI.init();
@@ -38,6 +58,7 @@ export function initializeApp() {
     historyStore,
     audioEngine,
     clipboardService,
+    themeManager,
     ui,
     quizEngine,
     learnUI,
