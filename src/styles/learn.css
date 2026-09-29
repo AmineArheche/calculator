@@ -1,0 +1,303 @@
+/* Student Math Learning Lab - Stylesheet */
+
+.learn-container {
+  display: none;
+  width: 100%;
+  max-width: 720px;
+  flex-direction: column;
+  gap: 20px;
+  animation: fadeIn 0.3s ease;
+}
+
+.learn-container.active {
+  display: flex;
+}
+
+.lab-mode-dimmed {
+  display: none !important;
+}
+
+/* Banner */
+.lab-header-banner {
+  background: var(--card-bg);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-app);
+  padding: 24px;
+  box-shadow: var(--card-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.banner-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.banner-emoji {
+  font-size: 2.2rem;
+  background: rgba(255, 159, 10, 0.12);
+  border: 1px solid rgba(255, 159, 10, 0.25);
+  border-radius: 16px;
+  padding: 8px 12px;
+}
+
+.banner-title-wrap h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text-main);
+  letter-spacing: -0.3px;
+}
+
+.banner-title-wrap p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* Learning Cards Grid */
+.learn-cards-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.learn-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid var(--card-border);
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+  transition: border-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.learn-card:hover {
+  border-color: rgba(255, 159, 10, 0.3);
+}
+
+.learn-card-header {
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.card-title-group {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.card-icon {
+  font-size: 1.6rem;
+  background: rgba(255, 255, 255, 0.05);
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.card-headings {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.card-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.topic-number {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #ff9f0a;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.topic-badge {
+  background: rgba(88, 166, 255, 0.14);
+  color: #58a6ff;
+  border: 1px solid rgba(88, 166, 255, 0.25);
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 1px 7px;
+  border-radius: 8px;
+}
+
+.topic-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.btn-card-toggle {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: transform var(--transition-fast), background var(--transition-fast);
+}
+
+.chevron-icon {
+  width: 20px;
+  height: 20px;
+  transition: transform var(--transition-smooth);
+}
+
+.learn-card.expanded .chevron-icon {
+  transform: rotate(180deg);
+}
+
+/* Card Body */
+.learn-card-body {
+  display: none;
+  padding: 0 20px 20px 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  margin-top: 4px;
+  animation: fadeIn 0.25s ease;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.learn-card.expanded .learn-card-body {
+  display: flex;
+  padding-top: 16px;
+}
+
+.topic-desc {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--text-main);
+}
+
+.rules-container h4 {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.concepts-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-left: 4px;
+}
+
+.concepts-list li {
+  font-size: 0.85rem;
+  color: #c9d1d9;
+  line-height: 1.45;
+  position: relative;
+  padding-left: 18px;
+}
+
+.concepts-list li::before {
+  content: '▸';
+  position: absolute;
+  left: 0;
+  color: #ff9f0a;
+}
+
+/* Action Box with Calculator Link */
+.action-formula-box {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.formula-preview {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.formula-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.formula-code {
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  color: #ff9f0a;
+  background: rgba(255, 159, 10, 0.1);
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 159, 10, 0.2);
+}
+
+.btn-try-calc {
+  background: linear-gradient(135deg, #ff9f0a 0%, #ff7700 100%);
+  color: #ffffff;
+  border: none;
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(255, 159, 10, 0.3);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.btn-try-calc:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(255, 159, 10, 0.45);
+}
+
+.btn-try-calc:active {
+  transform: scale(0.95);
+}
+
+/* Tip Callout */
+.learning-tip-box {
+  background: rgba(163, 113, 247, 0.1);
+  border: 1px solid rgba(163, 113, 247, 0.25);
+  border-radius: 12px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.tip-icon {
+  font-size: 1.1rem;
+}
+
+.tip-text {
+  font-size: 0.82rem;
+  color: #d2a8ff;
+  line-height: 1.4;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
