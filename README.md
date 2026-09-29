@@ -1,67 +1,104 @@
-# 🧮 Calculatrice Moderne & Élégante
+# 🧮 Calculator Pro (Calculatrice Moderne & Professionnelle)
 
-Une application web de calculatrice haut de gamme, fluide et responsive, développée en **HTML5**, **CSS3 pur (Flexbox / Grid / Glassmorphism)** et **JavaScript (ES6+)**.
+Une application web de calculatrice haut de gamme, modulaire et prête pour la production, développée avec une architecture orientée composants, une machine à états finis (**FSM**), un moteur mathématique haute précision, un support de tests automatisés **Vitest**, et un design sombre *glassmorphism*.
+
+---
+
+## 🏗️ Architecture Modulaire
+
+Le projet sépare strictement la logique métier, la persistance, l'audio et la présentation :
+
+```
+calculatrice-app/
+├── index.html                   # Structure sémantique HTML5
+├── package.json                 # Scripts Vite & dépendances Vitest
+├── vite.config.js               # Configuration du bundler Vite
+├── vitest.config.js             # Configuration du runner de tests Vitest (JSDOM)
+├── src/
+│   ├── main.js                  # Point d'entrée de l'application
+│   ├── core/
+│   │   ├── math-engine.js       # Moteur arithmétique haute précision (correction IEEE 754)
+│   │   ├── calculator-state.js  # Machine à états finis (Finite State Machine)
+│   │   ├── history-store.js     # Gestionnaire réactif d'historique + persistance localStorage
+│   │   ├── audio-engine.js      # Synthèse sonore temps réel (Web Audio API)
+│   │   ├── keyboard-handler.js  # Écouteurs globaux et mappage clavier matériel
+│   │   └── clipboard.js         # Service de copie presse-papier avec notifications toast
+│   ├── ui/
+│   │   ├── display.js           # Contrôleur double écran & auto-scaling de police
+│   │   └── calculator-ui.js     # Médiateur de présentation DOM ↔ État
+│   └── styles/
+│       ├── variables.css        # Tokens de design, couleurs & verre dépoli
+│       ├── layout.css           # Arrière-plan, mesh glows animés et centrage
+│       ├── calculator.css       # Boîtier card, header et toast
+│       ├── keypad.css           # Pavé 5x4 et retours tactiles
+│       ├── history.css          # Tiroir coulissant & entrées passées
+│       └── responsive.css       # Media queries mobile, tablette et bureau
+└── tests/
+    ├── math-engine.test.js      # Tests unitaires de précision arithmétique & cas limites
+    ├── calculator-state.test.js # Tests de transitions d'états, enchaînements et erreurs
+    ├── history-store.test.js    # Tests de persistance et limitation d'historique
+    └── keyboard-handler.test.js # Tests du routage des touches clavier
+```
 
 ---
 
 ## ✨ Fonctionnalités Clés
 
-### 🎨 Design & Ergonomie (UI / UX)
-- **Design Sombre Premium :** Effet verre dépoli (*Glassmorphism*), fond avec lueurs d'ambiance dynamiques (*mesh glows*), boutons aux couleurs distinctes et retour visuel tactile.
-- **Affichage Double Ligne (Dual Display) :**
-  - Ligne secondaire : Visualisation de l'expression ou de la formule en cours (`ex: 1 250 × 4 +`).
-  - Ligne principale : Résultat ou nombre saisi avec ajustement automatique de la taille de police et séparateur de milliers pour une lisibilité parfaite.
-- **100% Responsive :** Parfaitement optimisé pour smartphone, tablette et écran d'ordinateur.
+### 1. ⚙️ Machine à États & Précision Mathématique
+- **Découplage UI / Logique :** La machine à états `CalculatorStateMachine` orchestre les transitions (`IDLE`, `ENTERING_FIRST_OPERAND`, `OPERATION_SELECTED`, `ENTERING_SECOND_OPERAND`, `RESULT_DISPLAYED`, `ERROR`) sans aucune dépendance directe au DOM.
+- **Résolution des imprécisions IEEE 754 :** Les calculs flottants critiques (`0.1 + 0.2 = 0.3`, `0.7 + 0.1 = 0.8`, `0.2 * 0.1 = 0.02`) sont résolus avec exactitude.
+- **Gestion gracieuse des erreurs :** La division par zéro affiche clairement `"Cannot divide by zero"` sans bloquer le moteur, avec réinitialisation automatique dès la saisie suivante.
+- **Pourcentage contextuel :** Calcule intelligemment les augmentations/réductions (`100 + 20% = 120`).
 
-### ⚡ Fonctions Arithmétiques & Avancées
-- **Opérations de base :** Addition (`+`), Soustraction (`−`), Multiplication (`×`), Division (`÷`).
-- **Précision Haute-Fidélité :** Correction automatique des imprécisions de calcul flottant en JavaScript (évite les `0.1 + 0.2 = 0.30000000000000004`).
-- **Pourcentage Intelligent (`%`) :** Calcule les pourcentages contextuels (`100 + 20% = 120`).
-- **Inversion de Signe (`±`) :** Permet de basculer facilement entre positif et négatif.
-- **Effacement Intelligent :**
-  - Touche `⌫` (Backspace) pour supprimer le dernier caractère saisi.
-  - Touche `AC` / `C` pour effacement complet ou partiel.
-- **Gestion Robuste des Erreurs :** Message clair lors d'une division par zéro (`Division par zéro`) sans bloquer l'interface.
+### 2. 📜 Tiroir d'Historique Réactif & LocalStorage
+- **Tiroir coulissant :** Déclenché par l'icône horloge, avec compteur badge dynamique.
+- **Restauration au clic :** Cliquez sur n'importe quel calcul passé pour réinjecter immédiatement son résultat.
+- **Persistance locale :** Sauvegarde automatique dans le `localStorage` avec horodatage et limite de taille.
 
-### 🚀 Bonus Intégrés
-- **Panneau d'Historique Déroulant :**
-  - Conserve les calculs effectués avec horodatage (synchronisé dans le `localStorage`).
-  - Cliquez sur n'importe quelle entrée passée pour réinjecter son résultat dans la calculatrice.
-  - Bouton pour vider l'historique en un clic.
-- **Support Clavier Physique Intégral :** Tapez directement sur votre clavier avec simulation visuelle des touches pressées.
-- **Copie Facile :** Cliquez sur l'icône de copie ou directement sur le grand écran pour copier la valeur dans le presse-papier.
-- **Retour Sonore Tactile (Web Audio API) :** Bruits de clic subtils et chimes de validation sans aucun fichier MP3 externe (activable/désactivable avec le bouton dédié).
+### 3. ⌨️ Interactivité & Raccourcis Clavier
+- **Support clavier intégral :** Saisie directe des chiffres, opérateurs (`+`, `-`, `*`, `/`), validation (`Entrée`, `=`), effacement (`Backspace`, `Échap`).
+- **Retour visuel tactile :** Effet de pulsation synchronisé sur les boutons à chaque frappe clavier.
+- **Copie au clic :** Cliquez sur l'icône de copie ou sur l'écran pour copier le résultat dans le presse-papier avec confirmation visuelle (*Toast « Copié ! »*).
+- **Haptique sonore (Web Audio API) :** Clics subtils, carillon harmonique de validation et son d'alerte, désactivables via l'icône haut-parleur.
 
 ---
 
-## ⌨️ Raccourcis Clavier
+## 🧪 Tests Automatisés (Vitest)
 
-| Touche Clavier | Action dans la calculatrice |
-| :--- | :--- |
-| `0` à `9` | Saisie des chiffres |
-| `.` ou `,` | Virgule décimale |
-| `+` | Addition |
-| `-` | Soustraction |
-| `*` | Multiplication |
-| `/` | Division |
-| `Entrée` ou `=` | Calculer le résultat (`=`) |
-| `Backspace` (Retour) | Effacer le dernier chiffre (`⌫`) |
-| `Échap` (Escape) ou `Suppr` | Tout effacer (`AC`) |
-| `%` | Pourcentage |
+La suite de tests unitaires valide l'ensemble des règles métier, la machine à états et les raccourcis clavier :
+
+```bash
+# Exécuter les tests une fois
+npm test
+
+# Exécuter les tests en mode watch interactif
+npm run test:watch
+```
+
+30 tests unitaires couvrent :
+- Précision arithmétique et arrondis
+- Protection contre la division par zéro
+- Enchaînement d'opérations et calculs continus
+- Persistance et restauration de l'historique
+- Mappage des touches du clavier matériel
 
 ---
 
-## 🚀 Comment Lancer l'Application
+## 🚀 Développement & Build de Production
 
-Aucun serveur ou installation `node_modules` n'est nécessaire !
+```bash
+# Lancer le serveur de développement local Vite
+npm run dev
 
-1. Ouvrez simplement le fichier **`index.html`** dans votre navigateur web préféré (Chrome, Firefox, Edge, Safari, Brave, etc.) :
-   - Soit par un double-clic sur `index.html`.
-   - Soit par un clic droit > *Ouvrir avec...* > *Votre navigateur*.
-2. Profitez immédiatement de votre calculatrice !
+# Compiler le bundle de production optimisé
+npm run build
+
+# Prévisualiser la version de production
+npm run preview
+```
 
 ---
 
 ## 📄 Licence
 
-Ce projet est sous licence MIT - voir le fichier [LICENSE](LICENSE) pour plus de détails.
+Ce projet est sous licence MIT - voir le fichier [LICENSE](LICENSE).
