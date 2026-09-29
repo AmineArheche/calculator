@@ -36,6 +36,22 @@ export class KeyboardHandler {
       return;
     }
 
+    if (typeof document !== 'undefined') {
+      const learnContainer = document.getElementById('learn-container');
+      const isLabActive = learnContainer && learnContainer.classList.contains('active');
+
+      if (isLabActive) {
+        if (e.key === 'Escape') {
+          const toggleBtn = document.getElementById('btn-learn-mode-toggle');
+          if (toggleBtn) {
+            toggleBtn.click();
+            e.preventDefault();
+          }
+        }
+        return;
+      }
+    }
+
     const key = e.key;
     let buttonSelector = null;
 
