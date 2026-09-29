@@ -67,6 +67,18 @@ export class LearnUI {
           return;
         }
 
+        // Quiz Reset Button
+        const resetBtn = e.target.closest('.btn-reset-quiz');
+        if (resetBtn) {
+          if (typeof window !== 'undefined' && window.confirm && !window.confirm('Voulez-vous réinitialiser vos réponses aux quiz et recommencer ?')) {
+            return;
+          }
+          this.quizEngine.resetProgress();
+          this.renderSections();
+          this.audioEngine.play('click');
+          return;
+        }
+
         // Quiz option selection
         const optionBtn = e.target.closest('.quiz-option-btn');
         if (optionBtn && !optionBtn.disabled) {
@@ -115,23 +127,35 @@ export class LearnUI {
     this.toggleLabMode(false);
 
     // Pre-fill / calculate formula in state machine
-    // e.g. "25 + 17", "100 − 37", "12 × 8", "144 ÷ 12", "0.1 + 0.2", "2 + 3 × 4"
     this.stateMachine.clear();
 
-    const tokens = formula.split(' ');
-    if (tokens.length === 3) {
-      const a = tokens[0];
-      const op = tokens[1];
-      const b = tokens[2];
+    const tokens = formula.trim().split(/\s+/);
+    const opMap = {
+      '+': '+',
+      '−': '−',
+      '-': '−',
+      '×': '×',
+      '*': '×',
+      '÷': '÷',
+      '/': '÷',
+    };
 
-      for (const char of a) {
-        if (char === '.') this.stateMachine.inputDecimal();
-        else this.stateMachine.inputDigit(char);
-      }
-      this.stateMachine.setOperation(op);
-      for (const char of b) {
-        if (char === '.') this.stateMachine.inputDecimal();
-        else this.stateMachine.inputDigit(char);
+    if (tokens.length >= 3 && tokens.length % 2 === 1) {
+      for (let i = 0; i < tokens.length; i++) {
+        const token = tokens[i];
+        if (opMap[token]) {
+          this.stateMachine.setOperation(opMap[token]);
+        } else {
+          const isNeg = token.startsWith('-') && token.length > 1;
+          const cleanNum = isNeg ? token.slice(1) : token;
+          for (const char of cleanNum) {
+            if (char === '.' || char === ',') this.stateMachine.inputDecimal();
+            else this.stateMachine.inputDigit(char);
+          }
+          if (isNeg) {
+            this.stateMachine.toggleSign();
+          }
+        }
       }
       this.stateMachine.calculate();
     } else {
@@ -175,12 +199,19 @@ export class LearnUI {
       const pct = snapshot.totalQuestions > 0 ? (snapshot.score / snapshot.totalQuestions) * 100 : 0;
       this.progressBar.style.width = `${pct}%`;
     }
+
+    const masteryBanner = document.getElementById('quiz-mastery-banner');
+    if (masteryBanner) {
+      const isMaster = snapshot.totalQuestions > 0 && snapshot.score === snapshot.totalQuestions;
+      masteryBanner.classList.toggle('visible', isMaster);
+    }
   }
 
   renderSections() {
     if (!this.container) return;
 
     const quizState = this.quizEngine.getStateSnapshot();
+    const isMaster = quizState.totalQuestions > 0 && quizState.score === quizState.totalQuestions;
 
     const cardsHtml = MATH_SECTIONS.map((sec) => {
       const topicObj = ALL_TOPICS.find((t) => t.id === sec.id);
@@ -249,10 +280,20 @@ export class LearnUI {
         <div class="quiz-tracker-box">
           <div class="tracker-labels">
             <span>Score aux Quiz :</span>
-            <strong id="quiz-score-badge">${quizState.score}/${quizState.totalQuestions}</strong>
+            <div class="tracker-actions">
+              <strong id="quiz-score-badge">${quizState.score}/${quizState.totalQuestions}</strong>
+              <button type="button" class="btn-reset-quiz" title="Recommencer les quiz à zéro">🔄 Recommencer</button>
+            </div>
           </div>
           <div class="progress-track">
             <div id="quiz-progress-bar" class="progress-fill" style="width: ${(quizState.score / (quizState.totalQuestions || 1)) * 100}%"></div>
+          </div>
+        </div>
+        <div id="quiz-mastery-banner" class="quiz-mastery-banner ${isMaster ? 'visible' : ''}">
+          <span class="mastery-icon">🏆</span>
+          <div class="mastery-text">
+            <strong>Félicitations ! Vous avez validé 100% des quiz !</strong>
+            <span>Niveau Maître des Fondations Mathématiques atteint avec succès.</span>
           </div>
         </div>
       </div>

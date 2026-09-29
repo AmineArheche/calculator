@@ -19,9 +19,32 @@
   color: var(--text-muted);
 }
 
+.tracker-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .tracker-labels strong {
   color: #ff9f0a;
   font-size: 0.95rem;
+}
+
+.btn-reset-quiz {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--text-muted);
+  border-radius: 6px;
+  font-size: 0.72rem;
+  padding: 3px 8px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-reset-quiz:hover {
+  background: rgba(248, 81, 73, 0.15);
+  border-color: rgba(248, 81, 73, 0.35);
+  color: #ff7b72;
 }
 
 .progress-track {
@@ -37,6 +60,53 @@
   background: linear-gradient(90deg, #ff9f0a 0%, #388bfd 100%);
   border-radius: 4px;
   transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Mastery Celebration Banner */
+.quiz-mastery-banner {
+  display: none;
+  background: linear-gradient(135deg, rgba(255, 159, 10, 0.16) 0%, rgba(56, 139, 253, 0.16) 100%);
+  border: 1px solid rgba(255, 159, 10, 0.4);
+  border-radius: 12px;
+  padding: 12px 16px;
+  align-items: center;
+  gap: 12px;
+  animation: pulseGlow 3s infinite ease-in-out;
+}
+
+.quiz-mastery-banner.visible {
+  display: flex;
+}
+
+.mastery-icon {
+  font-size: 1.8rem;
+  animation: bounceCup 1.5s infinite alternate ease-in-out;
+}
+
+.mastery-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mastery-text strong {
+  font-size: 0.88rem;
+  color: #ffb340;
+}
+
+.mastery-text span {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 10px rgba(255, 159, 10, 0.2); }
+  50% { box-shadow: 0 0 20px rgba(255, 159, 10, 0.4); }
+}
+
+@keyframes bounceCup {
+  from { transform: translateY(0); }
+  to { transform: translateY(-3px) scale(1.05); }
 }
 
 /* Quiz Block in Cards */
